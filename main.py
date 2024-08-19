@@ -1,5 +1,4 @@
 import random
-import time
 
 # Global Skor Tablosu ve İstatistikler
 total_games = 0
@@ -41,22 +40,30 @@ def get_computer_choice(difficulty, player_choice=None):
             return choices[(choices.index(player_choice) + 1) % 3]
         return random.choice(choices)
 
+def get_point_value(difficulty):
+    if difficulty == 'easy':
+        return 150
+    elif difficulty == 'medium':
+        return 300
+    else:  # hard
+        return 600
+
 def play_game(difficulty, mode):
     global total_games, player_score, computer_score, total_moves, player_points
     
     if mode == 'quick':
         rounds_needed = 1
         score_multiplier = 0.5
-        print("mod information: single tour")
+        print("Mode Information: Single tour")
     elif mode == 'normal':
         rounds_needed = 2
         score_multiplier = 1
-        print("mod information: 2 on the score wins");
+        print("Mode Information: 2 rounds win")
     elif mode == 'tournament':
         rounds_needed = 2
         score_multiplier = 1
         tournament_sets = 5
-        print("mod information: It consists of 5 sets. each set is won by 2 points. The winner of the set points is the winner of the tournament")
+        print("Mode Information: 5 sets, 2 wins per set, winner of the tournament gets double points")
     else:
         print("Invalid game mode.")
         return
@@ -68,6 +75,7 @@ def play_game(difficulty, mode):
             print(f"\nSet {set_number} Start!")
             round_player_wins = 0
             round_computer_wins = 0
+            set_point_value = get_point_value(difficulty)
             
             while round_player_wins < rounds_needed and round_computer_wins < rounds_needed:
                 print("\nMake your move (rock, paper, scissors): ", end='')
@@ -99,14 +107,14 @@ def play_game(difficulty, mode):
             if round_player_wins == rounds_needed:
                 print("You win this set!")
                 player_set_wins += 1
-                player_points += 300 * score_multiplier
+                player_points += set_point_value
             else:
                 print("Computer wins this set!")
                 computer_set_wins += 1
 
         if player_set_wins > computer_set_wins:
             print("Congratulations! You win the tournament!")
-            player_points += 1200 * score_multiplier  # Double points for tournament win
+            player_points *= 2  # Double points for tournament win
         else:
             print("Sorry, you lose the tournament!")
             computer_score += 1
@@ -114,6 +122,7 @@ def play_game(difficulty, mode):
     else:
         round_player_wins = 0
         round_computer_wins = 0
+        point_value = get_point_value(difficulty)
 
         while round_player_wins < rounds_needed and round_computer_wins < rounds_needed:
             print("\nMake your move (rock, paper, scissors): ", end='')
@@ -147,9 +156,9 @@ def play_game(difficulty, mode):
             print("Congratulations! You win the game!")
             player_score += 1
             if mode == 'quick':
-                player_points += (150 if difficulty == 'easy' else 300 if difficulty == 'medium' else 600) * 0.5
+                player_points += point_value * 0.5
             elif mode == 'normal':
-                player_points += 150 if difficulty == 'easy' else 300 if difficulty == 'medium' else 600
+                player_points += point_value
         else:
             print("Sorry, you lose the game!")
             computer_score += 1
